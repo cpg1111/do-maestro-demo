@@ -9,7 +9,7 @@ events {
 
 http {
     root       /var/www/;
-    log_formet upstreamlog '[$time_local] $remote_addr - $remote_user - $server_name to: $upstream_addr: $request upstream_response_time $upstream_response_time msec $msec request_time $request_time';
+    log_format upstreamlog '[$time_local] $remote_addr - $remote_user - $server_name to: $upstream_addr: $request upstream_response_time $upstream_response_time msec $msec request_time $request_time';
     access_log /var/log/nginx/access.log upstreamlog;
     error_log  /var/log/nginx/error.log;
 
@@ -24,7 +24,6 @@ http {
     server {
         listen                   80;
         listen                   443 ssl;
-        server_name              *;
         ssl_certificate          certs/maestrod.io.crt;
         ssl_certificate_key      certs/maestrod.io.key;
         ssl_protocols            TLSv1 TLSv1.1 TLSv1.2;
