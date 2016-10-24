@@ -1,0 +1,65 @@
+[Environment]
+Env=[]
+ExecSync[]
+Exec=[]
+
+[Project]
+RepoURL="git@github.com:cpg1111/demo-maestro-app.git"
+CloneCMD="git clone"
+AuthType="SSH"
+SSHPrivKeyPath="~/.ssh/id-rsa"
+SSHPubKeyPath="~/.ssh/id-rsa.pub"
+Username="git"
+Password=""
+PromptForPWD=false
+
+[[Services]]
+Name="db"
+Tag="0.1.1"
+TagType="git"
+Path="./services/db"
+BuildLogFilePath="/var/log/maestro/db.log"
+BuildCMD=["docker build -t db ."]
+TestCMD=["docker run --rm db test"]
+CheckCMD=[""]
+CreateCMD=["docker push "]
+UpdateCMD=["docker push "]
+DependsOn=[]
+
+[[Services]]
+Name="auth"
+Tag="0.1.0"
+TagType="git"
+Path="./services/auth"
+BuildLogFilePath="/var/log/maestro/auth.log"
+BuildCMD=["docker build -t auth ."]
+TestCMD=["docker run --rm auth test"]
+CheckCMD=[""]
+CreateCMD=["docker push ", "kubectl create -f"]
+UpdateCMD=["docker push", "kubectl rolling-update auth --image="]
+DependsOn=["db"]
+
+[[Services]]
+Name="chat"
+Tag="0.1.1"
+TagType="git"
+Path="./services/chat"
+BuildLogFilePath="/var/log/maestro/chat.log"
+BuildCMD=["docker build -t chat ."]
+TestCMD=["docker run --rm chat test"]
+CheckCMD=[""]
+CreateCMD=["docker push ", "kubectl create -f"]
+UpdateCMD=["docker push ", "kubectl rolling-update chat --image="]
+DependsOn=["db"]
+
+[[Services]]
+Name="client"
+Tag="0.1.1"
+TagType="git"
+BuildLogFilePath="/var/log/maestro/client.log"
+BuildCMD=["gulp build", "docker build -t client ."]
+TestCMD=["docker run --rm client test"]
+CheckCMD=[""]
+CreateCMD=["docker push ", "kubectl create -f"]
+UpdateCMD=["docker push ", "kubectl rolling-update client --image="]
+

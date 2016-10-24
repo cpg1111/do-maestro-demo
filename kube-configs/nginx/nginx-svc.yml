@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+    name: nginx
+    labels:
+       name: nginx
+spec:
+    ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+          nodePort: 80
+          name: nginxinsecure
+        - protocol: TCP
+          port: 443
+          targetPort: 443
+          nodePort: 443
+          name: nginxsecure
+    selector:
+        name: nginx
+    sessionAffinity: ClientIP
+    type: NodePort
