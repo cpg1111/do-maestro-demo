@@ -1,0 +1,8 @@
+[Unit]
+Description=Run Flannel
+Documentation=https://www.github.com/coreos/flannel
+Requires=etcd.service
+After=etcd.service
+ExecStartPre=/usr/local/bin/etcdctl set /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
+ExecStart=/opt/bin/flanneld
+

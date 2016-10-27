@@ -19,7 +19,7 @@ users:
         - docker
         - kube
       ssh-authorized-keys:
-        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUUb0RTPmGwmmRKcIlioZ+5mlTSPZJUmmnv9K4PsVFcNZ7CLfpi4zjbpmd9rbStEEQLhI9eRtVJ46Bga6Pc/B0nkmlEXcRrSWWf3e+XlyepltD9ScaGEUXVjtU80wAYXM7gfqpcpy1WEZcy5GNf0Kiyd/9csJrnvMZnwKG5QlaD0T/3gXLmybT4QLszVbHWNebCun7PNn2C0hvoa+87jHFGJAlI+zIhtr7Pl+y2dslJ2+ytHFPFyPMNEWDIklZauEJWU3UcrlWLJtHtKInKRE5VNGeY3XM0oLrfUt1OxV72yg59GjS1G9eqe1kpqkOoyqrxxtGYAQlpIVgrPAs4ekZ christiang11754@gmail.com
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDplVn6QF98KJaWgfgFVfsHRW3mFEmhH77mnhkChPfxjmR1rS2YjIR9Hv4XA5ALccROyewX2Q4LPlYu7S9Tj6wbSpt6kO591mJkJyWslFV0o7Qpu1xiS79g8htXJxkBRc6FqYVkV5gzouaTeiBXJzdwXqo26asXfmz+2egMc04o5XKVd2IdEWdeKfLj1vB/kLmUfoHmSn9bqIDwzsqWjiKpJOOYlZu2fRxjJ3ZJb3VN+r3yz1xgwYq9WeAzo7sqyzxYWZjVc4npArQmD9L/uH6bdvBiXAKdUGyG6CHCm+aEv7Jb3Et8nRJ6pAfqOQaBe4Fr7P+9xGeZbSTqEWX834I459GhIutbK2IQaPwZbni7It7iG8uyFIhoNnfJHOp2F0KMwuSugoMigQu6iQhZGdECOadxSQlD/+WnEcmOz2oQn+vxeUxXIxmwa0oWuDmCdwaTCPXXGzBHdnNWVLdOD9G7sHzekbf26INhOg/GFCRTWWyb89kmLCj0q7wDJNBOFGKZv+Ko7OtZj8aEAK/RDXCMJEgtgaj1QduSHvj2HLuAQl6OT7O137AcSonCWNCj/grWMidRQ7it0ZaaXl+imKLFoB/q5KcIBsxEtvq2Hk2nBRtG7duf54rFtMJ69MVFSnVPQzeVhejaQTWwqZg9XNisyzWVPidPaJSy0G+gwhxfSQ== local
       shell: /bin/bash
 coreos:
   etcd2:
@@ -39,6 +39,9 @@ coreos:
     - name: rpc-statd.service
       command: start
       enable: true
+
+    - name: sshd.service
+      command: start
     
     - name: early-docker.socket
       command: start

@@ -1,0 +1,11 @@
+[Unit]
+Description=etcd server
+Documentation=https://www.github.com/coreos/etcd
+Requires=network.target
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/etcd \
+    --listen-peer-urls="http://0.0.0.0:2380,http://0.0.0.0:7001" \
+    --listen-client-urls="http://0.0.0.0:2379,http://0.0.0.0:4001" \
+    --advertise-client-urls="http://0.0.0.0:2379,http://0.0.0.0:4001"
