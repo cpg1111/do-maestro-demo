@@ -6,11 +6,15 @@ metadata:
         name: maestrod
 spec:
     ports:
-        - protocol: TCP
+        - name: maestrod-hooks
+          protocol: TCP
           port: 8888
           targetPort: 8888
+        - name: maestrod-state
+          protocol: TCP
+          port: 8889
+          targetPort: 8889
     selector:
         name: maestrod
     sessionAffinity: ClientIP
     type: ClusterIP
-

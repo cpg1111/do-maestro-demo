@@ -2,8 +2,6 @@ kind: ReplicationController
 apiVersion: v1
 metadata:
     name: maestrod
-    lables:
-        name: maestrod
 spec:
     replicas: 1
     selector:
@@ -15,20 +13,18 @@ spec:
         spec:
             containers:
                 - name: maestrod
-                  image: cpg1111/maestrod:latest
+                  image: cpg1111/maestrod:0.1.1-rc0
                   ports:
-                      - name: maestrod
+                      - name: maestrod-hooks
                         containerPort: 8888
+                        protocol: TCP
+                      - name: maestrod-state
+                        containerPort: 8889
                         protocol: TCP
                   volumeMounts:
                       - name: conf
                         mountPath: /etc/maestrod/
-                  readinessProbe:
-                      httpGet:
-                          path: /healthz/
-                          port: 8888
             volumes:
                 - name: conf
                   hostPath:
                       path: /etc/maestrod/
-

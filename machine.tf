@@ -13,7 +13,11 @@ variable "user_data" {
 }
 
 variable "deploy_key" {
-  default = "{\"title\": \"do-maestro-demo\", \"key\": \"$(cat /etc/maestrod/creds.d/id_rsa.pub)\", \"read_only\": \"true\"}"
+  default = "{'title': 'do-maestro-demo', 'key': '$(cat /etc/maestrod/creds.d/id_rsa.pub)', 'read_only': 'true'}"
+}
+
+variable "deploy_key_pass" {
+    default = ""
 }
 
 provider "digitalocean" {
@@ -30,13 +34,47 @@ resource "digitalocean_droplet" "maestro-k8s" {
   region             = "nyc3"
   size               = "48gb"
   image              = "coreos-stable"
-  # private_networking = true
+  private_networking = true
   ssh_keys           = ["${digitalocean_ssh_key.default.id}"]
   user_data          = "${file("${var.user_data}")}"
 
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      user        = "christian"
+      private_key = "${file("${var.ssh_privkey}")}"
+    }
+
+    inline = [
+      "mkdir -p ~/k8s/ ~/maestrod/ ~/nginx/"
+    ]
+  }
+
+  provisioner "file" {
+      content = "${file("${var.ssh_privkey}")}"
+      destination = "~/.ssh/id_rsa"
+
+      connection {
+        type        = "ssh"
+        user        = "christian"
+        private_key = "${file("${var.ssh_privkey}")}"
+      }
+  }
+
+  provisioner "file" {
+      content = "${file("${var.ssh_pubkey}")}"
+      destination = "~/.ssh/id_rsa.pub"
+
+      connection {
+        type        = "ssh"
+        user        = "christian"
+        private_key = "${file("${var.ssh_privkey}")}"
+      }
+  }
+
   provisioner "file" {
     source      = "kube-configs/"
-    destination = "/etc/k8s/"
+    destination = "~/k8s/"
 
     connection {
       type        = "ssh"
@@ -47,7 +85,7 @@ resource "digitalocean_droplet" "maestro-k8s" {
 
   provisioner "file" {
     source      = "maestrod/"
-    destination = "/etc/maestrod/"
+    destination = "~/maestrod/"
 
     connection {
       type        = "ssh"
@@ -58,25 +96,12 @@ resource "digitalocean_droplet" "maestro-k8s" {
 
   provisioner "file" {
     source      = "nginx/"
-    destination = "/opt/nginx/"
+    destination = "~/nginx/"
 
     connection {
       type        = "ssh"
       user        = "christian"
       private_key = "${file("${var.ssh_privkey}")}"
     }
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "christian"
-      private_key = "${file("${var.ssh_privkey}")}"
-    }
-
-    inline = [
-      "ssh-keygen ssh-keygen -f /etc/maestrod/creds.d/id_rsa -t rsa -b 4096 -C 'do-maestro-demo' -N ''",
-      "curl -XPOST -H 'Content-Type: application/json' -d ${var.deploy_key}  https://api.github.com/repos/cpg1111/maestro/keys",
-    ]
   }
 }

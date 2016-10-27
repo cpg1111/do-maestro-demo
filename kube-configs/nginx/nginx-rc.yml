@@ -15,7 +15,7 @@ spec:
         spec:
             containers:
                 - name: nginx
-                  image: cpg1111/do-maestro-example-nginx
+                  image: cpg1111/maestro-demo-nginx
                   ports:
                       - name: nginxinsecure
                         containerPort: 80
@@ -23,15 +23,3 @@ spec:
                       - name: nginxsecure
                         containerPort: 443
                         protocol: TCP
-                  volumeMounts:
-                      - name: certs
-                        mountPath: /etc/nginx/certs/
-                  readinessProbe:
-                      httpGet:
-                          path: /healthz/
-                          port: 80
-            volumes:
-                - name: certs
-                  secret:
-                      secretName: certs
-

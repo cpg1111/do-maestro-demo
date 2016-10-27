@@ -1,14 +1,19 @@
 [Environment]
 Env=[]
-ExecSync[]
+ExecSync=[
+    "mkdir -p /root/.ssh/ /root/.docker/"
+    "cp /etc/maestrod/creds.d/id_rsa /root/.ssh/id_rsa",
+    "cp /etc/maestrod/creds.d/id_rsa /root/.ssh/id_rsa",
+    "cp /etc/maestrod/creds.d/config.json /root/.docker/"
+]
 Exec=[]
 
 [Project]
 RepoURL="git@github.com:cpg1111/demo-maestro-app.git"
 CloneCMD="git clone"
 AuthType="SSH"
-SSHPrivKeyPath="~/.ssh/id-rsa"
-SSHPubKeyPath="~/.ssh/id-rsa.pub"
+SSHPrivKeyPath="~/.ssh/id_rsa"
+SSHPubKeyPath="~/.ssh/id_rsa.pub"
 Username="git"
 Password=""
 PromptForPWD=false
@@ -19,11 +24,11 @@ Tag="0.1.1"
 TagType="git"
 Path="./services/db"
 BuildLogFilePath="/var/log/maestro/db.log"
-BuildCMD=["docker build -t db ."]
-TestCMD=["docker run --rm db test"]
-CheckCMD=[""]
-CreateCMD=["docker push "]
-UpdateCMD=["docker push "]
+BuildCMD=["docker build -t cpg1111/demo-maestro-db:{{.Curr}} ."]
+TestCMD=["docker run --rm cpg1111/demo-maestro-db:{{.Curr}} test"]
+CheckCMD=["echo 'no check'"]
+CreateCMD=["docker push cpg1111/demo-maestro-db:{{.Curr}}"]
+UpdateCMD=["docker push cpg1111/demo-maestro-db:{{.Curr}}"]
 DependsOn=[]
 
 [[Services]]
@@ -32,11 +37,14 @@ Tag="0.1.0"
 TagType="git"
 Path="./services/auth"
 BuildLogFilePath="/var/log/maestro/auth.log"
-BuildCMD=["docker build -t auth ."]
-TestCMD=["docker run --rm auth test"]
-CheckCMD=[""]
-CreateCMD=["docker push ", "kubectl create -f"]
-UpdateCMD=["docker push", "kubectl rolling-update auth --image="]
+BuildCMD=["docker build -t cpg1111/demo-maestro-auth:{{.Curr}} ."]
+TestCMD=["docker run --rm cpg1111/demo-maestro-auth:{{.Curr}} test"]
+CheckCMD=["echo 'no check'"]
+CreateCMD=["docker push cpg1111/demo-maestro-auth:{{.Curr}}", "kubectl create -f ./rc.yml"]
+UpdateCMD=[
+    "docker push cpg1111/demo-maestro-auth:{{.Curr}}",
+    "kubectl rolling-update auth --image=cpg1111/demo-maestro-auth:{{.Curr}}"
+]
 DependsOn=["db"]
 
 [[Services]]
@@ -45,11 +53,17 @@ Tag="0.1.1"
 TagType="git"
 Path="./services/chat"
 BuildLogFilePath="/var/log/maestro/chat.log"
-BuildCMD=["docker build -t chat ."]
-TestCMD=["docker run --rm chat test"]
-CheckCMD=[""]
-CreateCMD=["docker push ", "kubectl create -f"]
-UpdateCMD=["docker push ", "kubectl rolling-update chat --image="]
+BuildCMD=["docker build -t cpg1111/demo-maestro-chat:{{.Curr}} ."]
+TestCMD=["docker run --rm cpg1111/demo-maestro-chat:{{.Curr}} test"]
+CheckCMD=["echo 'no check'"]
+CreateCMD=[
+    "docker push cpg1111/demo-maestro-chat:{{.Curr}}",
+    "kubectl create -f ./rc.yml"
+]
+UpdateCMD=[
+    "docker push cpg1111/demo-maestro-chat:{{.Curr}}",
+    "kubectl rolling-update chat --image=cpg1111/demo-maestro-chat:{{.Curr}}"
+]
 DependsOn=["db"]
 
 [[Services]]
@@ -57,9 +71,11 @@ Name="client"
 Tag="0.1.1"
 TagType="git"
 BuildLogFilePath="/var/log/maestro/client.log"
-BuildCMD=["gulp build", "docker build -t client ."]
-TestCMD=["docker run --rm client test"]
-CheckCMD=[""]
-CreateCMD=["docker push ", "kubectl create -f"]
-UpdateCMD=["docker push ", "kubectl rolling-update client --image="]
-
+BuildCMD=["gulp build", "docker build -t cpg1111/demo-maestro-client:{{.Curr}} ."]
+TestCMD=["docker run --rm cpg1111/demo-maestro-clien:{{.Curr}} test"]
+CheckCMD=["echo 'no check'"]
+CreateCMD=["docker push cpg1111/demo-maestro-client:{{.Curr}}", "kubectl create -f ./rc.yml"]
+UpdateCMD=[
+    "docker push cpg1111/demo-maestro-client:{{.Curr}}"
+]
+DependsOn=["db"]
