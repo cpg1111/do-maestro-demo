@@ -1,7 +1,7 @@
 [Environment]
 Env=[]
 ExecSync=[
-    "mkdir -p /root/.ssh/ /root/.docker/"
+    "mkdir -p /root/.ssh/ /root/.docker/",
     "cp /etc/maestrod/creds.d/id_rsa /root/.ssh/id_rsa",
     "cp /etc/maestrod/creds.d/id_rsa /root/.ssh/id_rsa",
     "cp /etc/maestrod/creds.d/config.json /root/.docker/"
@@ -24,7 +24,7 @@ Tag="0.1.1"
 TagType="git"
 Path="./services/db"
 BuildLogFilePath="/var/log/maestro/db.log"
-BuildCMD=["docker build -t cpg1111/demo-maestro-db:{{.Curr}} ."]
+BuildCMD=["docker build -t cpg1111/demo-maestro-db:{{.Curr}} .", "docker tag cpg1111/demo-maestro-db:{{.Curr}} demo_db"]
 TestCMD=["docker run --rm cpg1111/demo-maestro-db:{{.Curr}} test"]
 CheckCMD=["echo 'no check'"]
 CreateCMD=["docker push cpg1111/demo-maestro-db:{{.Curr}}"]
